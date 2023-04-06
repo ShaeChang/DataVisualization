@@ -72,10 +72,61 @@ milexp_2011 %>%
     
     min.size = 0)
 
-# Adding a variable: total national population
-
+# Adding a variable: total national population 
+# 增加一个颜色深浅以表示人口多少的数据维度
 # to use 'scale_fill_gradient()' function to fulfill
-# (solution will be provided on Canvas later)
+
+milexp_2011 %>% 
+  ggplot(
+    aes(area = milex,
+        
+        # use total population, but not region here, to fill the color of 
+        # each tiles
+        
+        fill = tpop,
+        label = name,
+        subgroup = region)) +
+  geom_treemap() +
+  geom_treemap_subgroup_border(
+    color = 'white') +
+  geom_treemap_text(
+    fontface = 'italic',
+    color = 'white',
+    place = 'center',
+    grow = FALSE,
+    reflow = TRUE) +
+  geom_treemap_subgroup_text(
+    place = 'center',
+    grow = TRUE,
+    alpha = 0.5,
+    color = 'gray98',
+    min.size = 0) +
+  labs(title = paste('Regional and National Share of Global Military Spending',
+                     'in 2011'),
+       subtitle = paste('The former Soviet Union`s share of spending fell',
+                        'sharply after the Cold War'),
+       caption = paste('Data: The Correlates of War Project National Material',
+       'Capabilities')) +
+  scale_fill_gradient(low = 'deepskyblue',
+                      high = 'dark blue',
+                      breaks = 
+                        seq(0, 1400000, by = 250000),
+                      
+                      # to break the name into 3 lines
+                      
+                      name = 'Population\nin 1000s\nof people',
+                      
+                      # use these labels, to include ',' inside the numbers
+                      # to be more clear
+                      
+                      labels = c('0',
+                                 '250,000',
+                                 '500,000',
+                                 '750,000',
+                                 '1,000,000',
+                                 '1,250,000'),
+                      limits = c(0, 1400000))
+
 
 # Visualizing Correlation Matrices ----------------------------------------
 
