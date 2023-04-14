@@ -1,0 +1,8 @@
+IF SUM([Percent Passed])<33 THEN '0 to < 33%'
+ELSEIF SUM([Percent Passed])>=33 AND SUM([Percent Passed])<50 THEN '33% to <50%'
+ELSEIF SUM([Percent Passed])>=50 AND SUM([Percent Passed])<68 THEN '50% to < 68%'
+ELSEIF SUM([Percent Passed])>=68 AND SUM([Percent Passed])<70 THEN '68% to < 70%'
+ELSEIF SUM([Percent Passed])>=70 AND SUM([Percent Passed])<80 THEN '70% to < 80%'
+ELSEIF SUM([Percent Passed])>=80 AND SUM([Percent Passed])<90 THEN '80% to < 90%'
+ELSE '90% to 100%'
+END

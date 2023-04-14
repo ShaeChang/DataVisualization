@@ -83,6 +83,40 @@ ggplot() +
            stat = 'identity',
            position = 'stack')
 
+# For thesis --------------------------------------------------------------
+
+thesis <-
+  EV_2010_to_2021 %>% 
+  filter(year == 2021,
+         parameter == 'EV stock') %>% 
+  filter(!region %in% 
+           
+           # exclude the regional data, in order to focus on countries
+           
+           c('Europe', 'Rest of the world', 'Other Europe', 'World')) %>%
+  filter(category == 'Historical') %>% 
+  group_by(mode) %>% 
+  summarise(value_new = sum(value))
+
+thesis_2 <-
+  EV_2010_to_2021 %>% 
+  filter(year == 2021,
+         parameter == 'EV stock',
+         region == 'World',
+         category == 'Historical') %>% 
+  group_by(mode) %>% 
+  summarise(value_new = sum(value)) %>% 
+  mutate(all = sum(value_new)) %>% 
+  mutate(precentage = value_new / all)
+
+
+
+
+
+
+
+
+
 
 
 
