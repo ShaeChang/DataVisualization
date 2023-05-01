@@ -1,0 +1,8 @@
+IF [migrants_display]>=0 AND [migrants_display]<= 10000 THEN '10 or less'
+ELSEIF [migrants_display]>10000 AND [migrants_display]<= 200000 THEN 'More than 10 to 200'
+ELSEIF [migrants_display]>20000 AND [migrants_display]<= 400000 THEN 'More than 200 to 400'
+ELSEIF [migrants_display]>40000 AND [migrants_display]<= 600000 THEN 'More than 400 to 600'
+ELSEIF [migrants_display]>60000 AND [migrants_display]<= 800000 THEN 'More than 600 to 800'
+ELSEIF [migrants_display]>80000 AND [migrants_display]<= 1000000 THEN 'More than 800 to 1000'
+ELSE 'More than 1000'
+END
