@@ -6,6 +6,7 @@
 
 library(sf)
 library(tidyverse)
+library(ggplot2)
 
 # Data preparation --------------------------------------------------------
 
@@ -109,7 +110,7 @@ state_features <-
   
   # including state abbreviation, state area, and state name
   
-  tibble(state.abb, state.area, state.name)
+  tibble(state.abb, state.area, state.name, state.region)
 
 # I don't know how to do these concisely so I hard-code to build the wanted 
 # variables
@@ -181,35 +182,68 @@ temp_fin <-
 
 # Data visualization ------------------------------------------------------
 
-# I tried to construct a bubble graph just like the replication practice in this
-# assignment.
-# Here, the two dimension in x-axis and y-axis shows the free charging rate and
-# the full hours charging rate in each state, respectively; the third dimension
-# shows the electronic vehicle charging station density in each state.
-# Overall, the chart tries to present the convenience for residents in different
-# states to charge their vehicles in daily life. As one state approaching the 
-# upper and right frontiers of this chart with a large bubble, that indicates 
-# charging one's electronic vehicle in this state will be pretty convenient.
+temp_fin %>% 
+  ggplot() +
+  geom_point(
+    aes(x = full_hours_rate,
+        y = free_charging_rate,
+        size = sqrt(station_density / pi),
+        color = state.region),
+    alpha = 0.7) +
+  geom_text(
+    aes(x = full_hours_rate,
+        y = free_charging_rate),
+    label = ifelse(
+      ((temp_fin$full_hours_rate >= 0.75 | 
+          temp_fin$free_charging_rate >= 0.9) |
+         (temp_fin$full_hours_rate < 0.5 | 
+            temp_fin$free_charging_rate < 0.6)),
+      state.abb,
+      ''),
+    size = 3.5,
+    color = '#636363',
+    hjust = 0,
+    nudge_x = 0.003) +
+  scale_color_manual(values = 
+                       c('#1f78b4', '#33a02c', '#bebada', '#fdcdac')) +
+  scale_size(range = c(.1, 20),
+             name = paste('Electronic vehicle\ncharging station density',
+                          '\n(Unit/mi^2)')) +
+  scale_x_continuous(limits = c(0.2, 1.0)) +
+  labs(title = paste('The Most Convenient and Inconvenient US states to',
+                     'Charge Electric Vehicles in 2023'),
+       subtitle = paste('Connecticut and Maryland Leading While Texas Falling',
+                        'Behind'),
+       caption = 'Source: Alternative Fuel Data Center',
+       x = 'Station ratio of offering full hours charging',
+       y = 'Station ratio of offering free charging') +
+  theme_bw() +
+  theme(
+    axis.ticks = element_blank(),
+    axis.line = element_line(colour = 'gray'),
+    panel.border = element_blank(),
+    panel.grid = element_blank())
 
-symbols(temp_fin$full_hours_rate,
-        temp_fin$free_charging_rate,
-        circles = 
-          sqrt(temp_fin$station_density / pi),
-        inches = 0.3,
-        fg = 'white',
-        bg = 'red',
-        main = paste('Convenience for residents in different US states to',
-                     'charge EVs'),
-        sub = paste('Statistics for public charging stations in each',
-                    'state, data: afdc.energy.gov'),
-        xlab = 'station ratio of offerring full hours charging',
-        ylab = 'station ratio of offerring free charging',
-        adj = 0) +
-  text(temp_fin$full_hours_rate,
-       temp_fin$free_charging_rate,
-       temp_fin$state.name,
-       cex = 0.5)
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
