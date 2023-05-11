@@ -5,7 +5,7 @@
 
 library(tidyverse)
 library(ggplot2)
-library(colorspace)
+library(ggrepel)
 
 # Load data ---------------------------------------------------------------
 
@@ -88,11 +88,6 @@ EV_analysis <-
 
 # Data visualization ------------------------------------------------------
 
-# generate a color palette
-
-palette <-
-  rainbow_hcl(27)
-
 # create a bubble chart
   
 EV_analysis %>% 
@@ -100,19 +95,20 @@ EV_analysis %>%
   geom_point(
     aes(x = EV_per_charger,
         y = fast_percentage,
-        size = EV_total,
-        color = palette)) +
+        size = EV_total),
+    color = '#a6cee3',
+    alpha = 0.7) +
   scale_size(range = c(.1, 30),
              name = 'Number of Electric Vehicles') +
   coord_flip() +
-  geom_text(
+  geom_text_repel(
     aes(
       x = EV_per_charger,
       y = fast_percentage,
       label = region),
-    hjust = 'left',
     size = 3,
-    check_overlap = T) +
+    segment.color = '#999999',
+    alpha = 0.8) +
   scale_x_continuous(
     breaks = seq(0, 60, 20)) +
   scale_y_continuous(
@@ -127,6 +123,7 @@ EV_analysis %>%
        y = 'share of publicly available fast charging post') +
   theme_minimal() +
   theme(panel.grid.minor = element_blank(),
-        panel.grid.major = element_line(linetype = 'dashed'),
-        legend.position = 'none')
+        panel.grid.major = element_line(linetype = 'dashed')
+        # legend.position = 'none'
+        )
   

@@ -3,6 +3,7 @@
 
 library(tidyverse)
 library(ggplot2)
+library(readxl)
 
 # Load data ---------------------------------------------------------------
 
@@ -15,10 +16,171 @@ stations <-
   
   filter(State != 'ON')
 
+# EV registration
+
+LDV_2021 <-
+  read_excel('assignment5/2021_LDV_registration.xlsx')
+
+LDV_2020 <-
+  read_excel('assignment5/2020_LDV_registration.xlsx')
+
+LDV_2019 <-
+  read_excel('assignment5/2019_LDV_registration.xlsx')
+
+LDV_2018 <-
+  read_excel('assignment5/2018_LDV_registration.xlsx')
+
+# State name and code
+
+state <-
+  read_csv('assignment5/state.csv') %>% 
+  select(-'abbrev') %>% 
+  rename('State' = 'state')
+
 # Data wrangling ----------------------------------------------------------
 
 # 1. Repeat the process to generate the 'All_years' data frame as same as 
-# the first graph (omit)
+# the first graph
+
+# Electric vehicle supply equipment (EVSE, charging points) in 2021 by state
+
+charger_2021 <-
+  stations %>% 
+  filter(year(`Open Date`) < 2022) %>% 
+  filter(State != 'ON') %>% 
+  select(`Station Name`, `EV Level1 EVSE Num`, `EV Level2 EVSE Num`,
+         `EV DC Fast Count`, State) %>% 
+  replace(is.na(.), 0) %>% 
+  mutate(EVSE = `EV Level1 EVSE Num` + `EV Level2 EVSE Num` + 
+           `EV DC Fast Count`) %>% 
+  group_by(State) %>% 
+  summarise(EVSE_state = sum(EVSE))
+
+# the Plug-in Electric Vehicles in 2021 by state
+
+PEV_2021 <-
+  LDV_2021 %>% 
+  filter(State != 'United States') %>% 
+  mutate(PEV = `Electric (EV)` + `Plug-In Hybrid Electric (PHEV)`) %>% 
+  select(State, PEV)
+
+# Merge the needed data for 2021
+
+merge_2021 <-
+  full_join(state, PEV_2021) %>% 
+  select(code, PEV) %>% 
+  rename(State = code) %>% 
+  full_join(charger_2021) %>% 
+  mutate(EV_per_charger = PEV / EVSE_state) %>% 
+  select(State, EV_per_charger) %>% 
+  mutate(year = 2021)
+
+# Electric vehicle supply equipment (EVSE, charging points) in 2020 by state
+
+charger_2020 <-
+  stations %>% 
+  filter(year(`Open Date`) < 2021) %>% 
+  filter(State != 'ON') %>% 
+  select(`Station Name`, `EV Level1 EVSE Num`, `EV Level2 EVSE Num`,
+         `EV DC Fast Count`, State) %>% 
+  replace(is.na(.), 0) %>% 
+  mutate(EVSE = `EV Level1 EVSE Num` + `EV Level2 EVSE Num` + 
+           `EV DC Fast Count`) %>% 
+  group_by(State) %>% 
+  summarise(EVSE_state = sum(EVSE))
+
+# the Plug-in Electric Vehicles in 2020 by state
+
+PEV_2020 <-
+  LDV_2020 %>% 
+  filter(State != 'United States') %>% 
+  mutate(PEV = `Electric (EV)` + `Plug-In Hybrid Electric (PHEV)`) %>% 
+  select(State, PEV)
+
+# Merge the needed data for 2020
+
+merge_2020 <-
+  full_join(state, PEV_2020) %>% 
+  select(code, PEV) %>% 
+  rename(State = code) %>% 
+  full_join(charger_2020) %>% 
+  mutate(EV_per_charger = PEV / EVSE_state)%>% 
+  select(State, EV_per_charger) %>% 
+  mutate(year = 2020)
+
+# Electric vehicle supply equipment (EVSE, charging points) in 2019 by state
+
+charger_2019 <-
+  stations %>% 
+  filter(year(`Open Date`) < 2020) %>% 
+  filter(State != 'ON') %>% 
+  select(`Station Name`, `EV Level1 EVSE Num`, `EV Level2 EVSE Num`,
+         `EV DC Fast Count`, State) %>% 
+  replace(is.na(.), 0) %>% 
+  mutate(EVSE = `EV Level1 EVSE Num` + `EV Level2 EVSE Num` + 
+           `EV DC Fast Count`) %>% 
+  group_by(State) %>% 
+  summarise(EVSE_state = sum(EVSE))
+
+# the Plug-in Electric Vehicles in 2019 by state
+
+PEV_2019 <-
+  LDV_2019 %>% 
+  filter(State != 'United States') %>% 
+  mutate(PEV = `Electric (EV)` + `Plug-In Hybrid Electric (PHEV)`) %>% 
+  select(State, PEV)
+
+# Merge the needed data for 2019
+
+merge_2019 <-
+  full_join(state, PEV_2019) %>% 
+  select(code, PEV) %>% 
+  rename(State = code) %>% 
+  full_join(charger_2019) %>% 
+  mutate(EV_per_charger = PEV / EVSE_state)%>% 
+  select(State, EV_per_charger) %>% 
+  mutate(year = 2019)
+
+# Electric vehicle supply equipment (EVSE, charging points) in 2018 by state
+
+charger_2018 <-
+  stations %>% 
+  filter(year(`Open Date`) < 2019) %>% 
+  filter(State != 'ON') %>% 
+  select(`Station Name`, `EV Level1 EVSE Num`, `EV Level2 EVSE Num`,
+         `EV DC Fast Count`, State) %>% 
+  replace(is.na(.), 0) %>% 
+  mutate(EVSE = `EV Level1 EVSE Num` + `EV Level2 EVSE Num` + 
+           `EV DC Fast Count`) %>% 
+  group_by(State) %>% 
+  summarise(EVSE_state = sum(EVSE))
+
+# the Plug-in Electric Vehicles in 2018 by state
+
+PEV_2018 <-
+  LDV_2018 %>% 
+  filter(State != 'United States') %>% 
+  mutate(PEV = `Electric (EV)` + `Plug-In Hybrid Electric (PHEV)`) %>% 
+  select(State, PEV)
+
+# Merge the needed data for 2018
+
+merge_2018 <-
+  full_join(state, PEV_2018) %>% 
+  select(code, PEV) %>% 
+  rename(State = code) %>% 
+  full_join(charger_2018) %>% 
+  mutate(EV_per_charger = PEV / EVSE_state)%>% 
+  select(State, EV_per_charger) %>% 
+  mutate(year = 2018)
+
+# Merge the data of different years
+
+All_years <-
+  rbind(merge_2018,
+        merge_2019) %>% 
+  rbind(merge_2020) %>% 
+  rbind(merge_2021)
 
 # 2. Minor adjustments
 
@@ -55,10 +217,13 @@ All_years_heat$EV_per_Charger <-
          levels = c('0 - 7', '7 - 14', '14 - 21', '21 - 28', '28 - 35',
                     '35 - 42', '42 - 49'))
 
+All_years_heat$year <-
+  factor(All_years_heat$year,
+         levels = seq(2021, 2018, -1))
+
 # Heat map ----------------------------------------------------------------
 
-heat_map <-
-  All_years_heat %>% 
+All_years_heat %>% 
   ggplot(mapping = 
            aes(x = State,
                y = year)) +
